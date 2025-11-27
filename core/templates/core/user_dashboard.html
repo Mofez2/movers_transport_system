@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard | Movers Transport{% endblock %}
+{% block content %}
+
+<style>
+  body {
+    background: url("{% static 'images/login_bg.jpg' %}") center/cover fixed no-repeat;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 0;
+  }
+
+  header, .navbar, nav {
+    position: relative;
+    z-index: 1000 !important;
+  }
+
+  .dashboard-header {
+    position: relative;
+    z-index: 1;
+    border-radius: 20px;
+    color: white;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    margin: 130px auto 30px;
+    max-width: 95%;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeIn 1.2s ease;
+  }
+
+  .dashboard-header-content {
+    padding: 40px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .company-title {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .company-tagline {
+    font-size: 1.1rem;
+    color: #d6d9ff;
+    font-weight: 500;
+  }
+
+  .greeting {
+    font-size: 1.2rem;
+    color: #f0f0ff;
+    margin-top: 10px;
+  }
+
+  .btn-new {
+    background: linear-gradient(90deg, #6f42c1, #0d6efd);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 25px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(13, 110, 253, 0.5);
+  }
+
+  .stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 22px;
+    margin-bottom: 40px;
+    max-width: 95%;
+    margin-inline: auto;
+  }
+
+  .card-stat {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 25px;
+    text-align: center;
+    backdrop-filter: blur(18px);
+    color: #fff;
+    transition: 0.3s;
+  }
+
+  .card-stat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-stat i {
+    font-size: 2rem;
+    color: #66b3ff;
+  }
+
+  .card-stat h6 {
+    margin-top: 10px;
+    font-weight: 600;
+    color: #d0d0ff;
+  }
+
+  .card-stat .number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .table-container {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 25px;
+    max-width: 95%;
+    margin: auto;
+    backdrop-filter: blur(22px);
+    color: #fff;
+  }
+
+  .booking-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .booking-table th {
+    background: linear-gradient(90deg, #6f42c1, #0d6efd);
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .booking-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .booking-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-action {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .btn-track {
+    background-color: #0d6efd;
+    color: white;
+  }
+
+  .btn-pay {
+    background-color: #ffc107;
+    color: black;
+  }
+
+  .btn-track:hover,
+  .btn-pay:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+
+<div class="dashboard-header">
+  <div class="dashboard-header-content">
+    <div>
+      <div class="company-title">Welcome Back 👋</div>
+      <div class="company-tagline">Your logistics journey starts here</div>
+      <div class="greeting">Hi, {{ request.user.username|default:"User" }} — ready to move?</div>
+    </div>
+    <a href="{% url 'user_booking' %}" class="btn-new">
+      <i class="bi bi-plus-circle me-1"></i> New Booking
+    </a>
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="stats-cards">
+    <div class="card-stat">
+      <i class="bi bi-truck"></i>
+      <h6>Active Bookings</h6>
+      <div id="activeBookings" class="number">{{ active_bookings|default:"0" }}</div>
+    </div>
+    <div class="card-stat">
+      <i class="bi bi-cash-coin"></i>
+      <h6>Total Payments</h6>
+      <div id="totalPayments" class="number">KES {{ total_payments|default:"0.00" }}</div>
+    </div>
+    <div class="card-stat">
+      <i class="bi bi-check2-circle"></i>
+      <h6>Delivered</h6>
+      <div id="deliveredBookings" class="number">{{ delivered_bookings|default:"0" }}</div>
+    </div>
+    <div class="card-stat">
+      <i class="bi bi-hourglass-split"></i>
+      <h6>Pending Deliveries</h6>
+      <div id="pendingBookings" class="number">{{ pending_bookings|default:"0" }}</div>
+    </div>
+  </div>
+
+
+  <div class="table-container">
+    <h5 class="mb-3 text-info fw-bold">My Bookings</h5>
+    {% if bookings %}
+    <table class="booking-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Vehicle</th>
+          <th>Pickup</th>
+          <th>Dropoff</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {% for booking in bookings %}
+        <tr>
+          <td>{{ booking.id }}</td>
+          <td>{{ booking.vehicle }}</td>
+          <td>{{ booking.pickup_address }}</td>
+          <td>{{ booking.dropoff_address }}</td>
+
+          <td>
+            {% if booking.status == 'Pending' %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% elif booking.status == 'Paid' %}
+              <span class="badge bg-info text-dark">Paid</span>
+            {% elif booking.status == 'Delivered' %}
+              <span class="badge bg-success">Delivered</span>
+            {% elif booking.status == 'Confirmed' %}
+              <span class="badge bg-secondary">Confirmed</span>
+            {% else %}
+              <span class="badge bg-light text-dark">{{ booking.status }}</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if booking.status == 'Pending' %}
+              <a href="{% url 'user_payment' booking.id %}" class="btn-action btn-pay">
+                <i class="bi bi-credit-card"></i> Pay
+              </a>
+            {% endif %}
+
+            {% if booking.status != 'Delivered' %}
+              <a href="{% url 'user_tracking' booking.id %}" class="btn-action btn-track">
+                <i class="bi bi-geo-alt"></i> Track
+              </a>
+            {% endif %}
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="text-light">You have no bookings yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const refreshDashboard = () => {
+    fetch("{% url 'user_dashboard_data' %}")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('activeBookings').textContent = data.total_bookings || 0;
+        document.getElementById('pendingBookings').textContent = data.pending_bookings || 0;
+        document.getElementById('deliveredBookings').textContent = data.delivered_bookings || 0;
+        document.getElementById('totalPayments').textContent =
+          "KES " + (data.total_payments || 0).toLocaleString();
+      })
+      .catch(err => console.error("Dashboard refresh error:", err));
+  };
+  refreshDashboard();
+  setInterval(refreshDashboard, 10000);
+});
+</script>
+
+{% endblock %}

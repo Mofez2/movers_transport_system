@@ -1,0 +1,65 @@
+[
+  {
+    "model": "core.service",
+    "pk": 1,
+    "fields": {
+      "name": "Packing & Unpacking",
+      "description": "Professional packers use high-quality materials to securely wrap and box items, while movers can also unpack them at your new location.",
+      "price": 5000.00
+    }
+  },
+  {
+    "model": "core.service",
+    "pk": 2,
+    "fields": {
+      "name": "Loading & Unloading",
+      "description": "Movers use proper lifting techniques and equipment to safely load your belongings onto the truck and unload them at your destination.",
+      "price": 3000.00
+    }
+  },
+  {
+    "model": "core.service",
+    "pk": 3,
+    "fields": {
+      "name": "Disassembly & Assembly",
+      "description": "Experienced movers can disassemble large items like beds and reassemble them at your new home.",
+      "price": 2500.00
+    }
+  },
+  {
+    "model": "core.service",
+    "pk": 4,
+    "fields": {
+      "name": "Specialty Item Moving",
+      "description": "Expertise and equipment to safely transport valuable or delicate items like pianos, artwork, and large appliances.",
+      "price": 8000.00
+    }
+  },
+  {
+    "model": "core.service",
+    "pk": 5,
+    "fields": {
+      "name": "Storage Solutions",
+      "description": "Temporary or long-term storage facilities for belongings that need to be stored during a move.",
+      "price": 4000.00
+    }
+  },
+  {
+    "model": "core.service",
+    "pk": 6,
+    "fields": {
+      "name": "Post-Move Services",
+      "description": "Services like arranging furniture, mounting TVs and portraits, and cleaning up moving debris.",
+      "price": 2000.00
+    }
+  },
+  {
+    "model": "core.service",
+    "pk": 7,
+    "fields": {
+      "name": "Laboratory Relocation",
+      "description": "Professional services for moving sensitive and high-value lab equipment and materials, as well as office relocations.",
+      "price": 10000.00
+    }
+  }
+]

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2>Confirm Booking #{{ booking.id }}</h2>
+
+  <div class="card p-4 mb-3">
+    <h4>Booking details</h4>
+    <p><strong>Pickup:</strong> {{ booking.pickup_address }}</p>
+    <p><strong>Dropoff:</strong> {{ booking.dropoff_address }}</p>
+
+    <p><strong>Service:</strong>
+      {% if booking.service %}
+        {{ booking.service.name }}
+      {% else %}
+        N/A
+      {% endif %}
+    </p>
+
+    <p><strong>Price:</strong> KES {{ booking.total_price }}</p>
+    <p><strong>Deposit:</strong> KES {{ booking.deposit_amount }}</p>
+  </div>
+
+  <div class="card p-4 mb-3">
+    <h4>Fleet / Driver</h4>
+
+    {% if booking.fleet %}
+      <p><strong>Fleet:</strong> {{ booking.fleet_name|default:"N/A" }}</p>
+      <p><strong>Driver:</strong> {{ booking.driver_name|default:"N/A" }}</p>
+      <p><strong>Loader:</strong> {{ booking.loader_name|default:"N/A" }}</p>
+      <p><strong>Vehicle plate:</strong> {{ booking.vehicle_plate|default:"N/A" }}</p>
+      <p><strong>Departure:</strong>
+        {% if booking.departure_time %}
+          {{ booking.departure_time }}
+        {% else %}
+          Pending
+        {% endif %}
+      </p>
+      <p><strong>Expected arrival:</strong>
+        {% if booking.expected_arrival %}
+          {{ booking.expected_arrival }}
+        {% else %}
+          Pending
+        {% endif %}
+      </p>
+    {% else %}
+      <p>Fleet not assigned yet. You will receive fleet details once assigned.</p>
+    {% endif %}
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-primary">Confirm Booking</button>
+    <a class="btn btn-outline-secondary" href="{% url 'user_dashboard' %}">Back</a>
+  </form>
+</div>
+{% endblock %}

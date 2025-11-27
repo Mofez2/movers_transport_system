@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tracking | Movers Transport{% endblock %}
+{% block content %}
+
+<style>
+  body {
+    background: url("{% static 'images/login_bg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(111, 66, 193, 0.35), rgba(13, 110, 253, 0.35));
+    animation: gradientShift 8s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  @keyframes gradientShift {
+    from { opacity: 0.6; background-position: left; }
+    to { opacity: 0.9; background-position: right; }
+  }
+
+  /* Navbar */
+  .navbar {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 1rem 2rem;
+    margin: 15px auto;
+    max-width: 96%;
+    z-index: 10;
+  }
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    color: white !important;
+  }
+
+  .navbar-brand img {
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #fff 0%, #ffecb3 40%, #fdd835 80%);
+    box-shadow: 0 0 25px rgba(255, 255, 200, 0.8);
+  }
+
+  .navbar a {
+    color: white !important;
+    position: relative;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .navbar a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background: white;
+    transition: width 0.3s;
+  }
+
+  .navbar a:hover::after {
+    width: 100%;
+  }
+
+  .btn-danger, .btn-outline-light {
+    border-radius: 10px;
+    transition: 0.3s;
+  }
+
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.6);
+  }
+
+  /* Tracking Section */
+  .tracking-section {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px 20px 80px;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(18px);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+    padding: 40px;
+    max-width: 850px;
+    width: 100%;
+    color: #fff;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .glass-card h2 {
+    font-weight: 700;
+    text-align: center;
+    font-size: 2rem;
+    background: linear-gradient(90deg, #fff, #ffecb3);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 10px;
+  }
+
+  .glass-card p {
+    text-align: center;
+    color: #f0f0f0;
+    margin-bottom: 30px;
+    font-weight: 500;
+  }
+
+  .info-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .info-box strong {
+    color: #ffe082;
+  }
+
+  #map {
+    height: 500px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Glowing Truck Effect */
+  .leaflet-marker-icon.truck-glow {
+    filter: drop-shadow(0 0 8px #fff9c4) drop-shadow(0 0 14px #fff176);
+  }
+
+  /* Gradient Button */
+  .btn-gradient {
+    background: linear-gradient(90deg, #ffeb3b, #fbc02d, #ffeb3b);
+    background-size: 200%;
+    animation: gradientFlow 4s linear infinite;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 12px 25px;
+    color: #000;
+    transition: all 0.3s ease;
+  }
+
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 235, 59, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    .glass-card { padding: 25px; }
+  }
+</style>
+
+<!-- 🌙 Transparent Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-transparent position-absolute w-100 px-4 py-3">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" width="45" height="45" class="me-2">
+      Movers Transport
+    </a>
+    <div>
+      {% if user.is_authenticated %}
+        <a href="{% url 'user_dashboard' %}" class="btn btn-outline-light me-2">Dashboard</a>
+        <a href="{% url 'user_logout' %}" class="btn btn-danger">Logout</a>
+      {% else %}
+        <a href="{% url 'user_login' %}" class="btn btn-outline-light me-2">Login</a>
+        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<!-- 🗺️ Tracking Section -->
+<section class="tracking-section">
+  <div class="glass-card">
+    <h2>Tracking Booking #{{ booking.id }}</h2>
+    <p>Track your delivery in real time and follow your truck’s live route.</p>
+
+    <div class="info-box">
+      <strong>🚚 Vehicle:</strong> {{ booking.vehicle.name }} ({{ booking.vehicle.vehicle_type }})<br>
+      <strong>📦 Status:</strong> <span class="text-warning">{{ booking.status|title }}</span>
+    </div>
+
+    <div id="map" class="mb-4"></div>
+
+    <div class="text-center">
+      <a href="{% url 'user_dashboard' %}" class="btn btn-gradient">← Back to Dashboard</a>
+    </div>
+  </div>
+</section>
+
+<!-- 🌍 Leaflet Dependencies -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<script>
+const bookingId = "{{ booking.id }}";
+const pickup = "{{ booking.pickup_address|escapejs }}";
+const dropoff = "{{ booking.dropoff_address|escapejs }}";
+
+let marker = null;
+let routeLine = null;
+let routeCoords = [];
+let animationIndex = 0;
+let animating = false;
+
+// 🟦 Glowing truck icon
+const truckIcon = L.icon({
+  iconUrl: "{% static 'images/truck_icon.png' %}?v={{ booking.id }}",
+  iconSize: [60, 60],
+  iconAnchor: [30, 30],
+  popupAnchor: [0, -30],
+  className: 'truck-glow'
+});
+
+// 🗺 Initialize map
+const map = L.map('map').setView([0, 0], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// 🌍 Geocode
+async function geocode(address) {
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+  const data = await res.json();
+  return data.length > 0 ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : null;
+}
+
+// 🚗 Fetch route
+async function getRoute(start, end) {
+  const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=full&geometries=geojson`);
+  const data = await res.json();
+  return data.routes?.length ? data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]) : [];
+}
+
+// 🚚 Smooth move function (interpolates between two points)
+function smoothMoveMarker(marker, fromLatLng, toLatLng, duration = 2000) {
+  const startTime = performance.now();
+
+  function animate() {
+    const now = performance.now();
+    const progress = Math.min((now - startTime) / duration, 1);
+
+    const lat = fromLatLng[0] + (toLatLng[0] - fromLatLng[0]) * progress;
+    const lng = fromLatLng[1] + (toLatLng[1] - fromLatLng[1]) * progress;
+
+    marker.setLatLng([lat, lng]);
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+// 🚛 Move truck continuously along preloaded route
+function animateRoute() {
+  if (!routeCoords.length || animating) return;
+  animating = true;
+
+  function moveStep() {
+    if (animationIndex >= routeCoords.length - 1) {
+      animationIndex = 0; // loop route
+    }
+
+    const from = routeCoords[animationIndex];
+    const to = routeCoords[animationIndex + 1];
+
+    if (!marker) {
+      marker = L.marker(from, { icon: truckIcon }).addTo(map);
+    }
+
+    smoothMoveMarker(marker, from, to, 1500); // smooth move
+    map.panTo(to, { animate: true });
+
+    animationIndex++;
+    setTimeout(moveStep, 1600); // small delay between segments
+  }
+
+  moveStep();
+}
+
+// 🚀 Initialize map tracking
+async function init() {
+  const pickupCoord = await geocode(pickup);
+  const dropoffCoord = await geocode(dropoff);
+  if (!pickupCoord || !dropoffCoord) return;
+
+  routeCoords = await getRoute(pickupCoord, dropoffCoord);
+
+  routeLine = L.polyline(routeCoords, { color: '#007BFF', weight: 5, opacity: 0.9 }).addTo(map);
+  map.fitBounds(routeLine.getBounds());
+
+  L.marker(pickupCoord).addTo(map).bindPopup("📦 Pickup: " + pickup);
+  L.marker(dropoffCoord).addTo(map).bindPopup("🏁 Dropoff: " + dropoff);
+
+  animateRoute();
+}
+
+init();
+
+// 🔄 Real-time live tracker updates (backend pings)
+setInterval(async () => {
+  try {
+    const res = await fetch(`/api/tracker/${bookingId}/`);
+    const data = await res.json();
+
+    // If backend returns path[] (multiple pings)
+    if (data.path && data.path.length > 0) {
+      const latest = data.path[data.path.length - 1];
+      const latestCoord = [latest.lat, latest.lng];
+
+      if (marker) {
+        const current = marker.getLatLng();
+        smoothMoveMarker(marker, [current.lat, current.lng], latestCoord, 2000);
+      } else {
+        marker = L.marker(latestCoord, { icon: truckIcon }).addTo(map);
+      }
+
+      map.panTo(latestCoord);
+    }
+  } catch (err) {
+    console.error("Tracker update failed:", err);
+  }
+}, 8000);
+</script>
+
+{% endblock %}

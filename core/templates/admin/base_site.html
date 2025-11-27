@@ -1,0 +1,31 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Movers Admin | {{ title }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  🚚 Movers Transport Admin
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+  {{ block.super }}
+  <style>
+    .unread-badge {
+      background-color: #dc3545;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      margin-left: 6px;
+    }
+  </style>
+
+  {% if unread_count > 0 %}
+    <a href="{% url 'admin:core_contactmessage_changelist' %}" style="color:#fff; margin-left:20px;">
+      📨 Contact Messages
+      <span class="unread-badge">{{ unread_count }}</span>
+    </a>
+  {% endif %}
+{% endblock %}

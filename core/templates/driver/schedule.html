@@ -1,0 +1,150 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Driver Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .driver-header {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+        padding: 25px;
+        border-radius: 15px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .job-card {
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: 0.2s;
+    }
+
+    .job-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .badge-status {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="container py-3">
+
+    <!-- HEADER -->
+    <div class="driver-header">
+        <h3>🚚 Welcome {{ driver.name }}</h3>
+        <p class="mb-0">
+            <strong>Vehicle:</strong>
+            {% if driver.vehicle %} {{ driver.vehicle.name }} {% else %} Not Assigned {% endif %}
+        </p>
+        <p class="mb-0"><strong>Phone:</strong> {{ driver.phone }}</p>
+    </div>
+
+    <!-- TODAY JOBS SECTION -->
+    <h4 class="mb-3 text-primary">📅 Today's Jobs</h4>
+    <div class="row">
+
+        {% for job in jobs %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card job-card">
+                <div class="card-body">
+
+                    <h5 class="card-title">Booking #{{ job.id }}</h5>
+
+                    <p><b>Pickup:</b> {{ job.pickup_address }}</p>
+                    <p><b>Drop-off:</b> {{ job.dropoff_address }}</p>
+
+                    <!-- 📞 CALL CUSTOMER BUTTON -->
+                    <p><b>Customer:</b> {{ job.customer.username }}</p>
+                    <a href="tel:{% if job.customer.userprofile %}{{ job.customer.userprofile.phone }}{% endif %}"
+                       class="btn btn-dark btn-sm w-100 mb-2">
+                        📞 Call Customer
+                    </a>
+
+                    <p><b>Status:</b>
+                        {% if job.status == "delivered" %}
+                            <span class="badge bg-success badge-status">Delivered</span>
+                        {% elif job.status == "enroute" %}
+                            <span class="badge bg-info text-dark badge-status">En Route</span>
+                        {% elif job.status == "confirmed" %}
+                            <span class="badge bg-primary badge-status">Confirmed</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark badge-status">Pending</span>
+                        {% endif %}
+                    </p>
+
+                    <!-- Navigate to Pickup -->
+                    {% if job.pickup_lat and job.pickup_lng %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ job.pickup_lat }},{{ job.pickup_lng }}"
+                           class="btn btn-outline-primary btn-sm w-100 mb-2" target="_blank">
+                            📍 Navigate to Pickup
+                        </a>
+                    {% else %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ job.pickup_address }}"
+                           class="btn btn-outline-primary btn-sm w-100 mb-2" target="_blank">
+                            📍 Navigate to Pickup
+                        </a>
+                    {% endif %}
+
+                    <!-- Navigate to Drop-off -->
+                    {% if job.dropoff_lat and job.dropoff_lng %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ job.dropoff_lat }},{{ job.dropoff_lng }}"
+                           class="btn btn-outline-secondary btn-sm w-100 mb-2" target="_blank">
+                            🗺 Navigate to Drop-off
+                        </a>
+                    {% else %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ job.dropoff_address }}"
+                           class="btn btn-outline-secondary btn-sm w-100 mb-2" target="_blank">
+                            🗺 Navigate to Drop-off
+                        </a>
+                    {% endif %}
+
+                    <!-- Status Action Buttons -->
+                    {% if job.status == "confirmed" %}
+                        <a href="{% url 'update_status' job.id 'enroute' %}"
+                           class="btn btn-primary btn-sm w-100 mb-2">🚚 Start Trip</a>
+
+                    {% elif job.status == "enroute" %}
+                        {% if not job.delivery_photo %}
+                            <a href="{% url 'upload_delivery_photo' job.id %}"
+                               class="btn btn-info btn-sm w-100 mb-2">
+                                📸 Upload Delivery Proof
+                            </a>
+                        {% endif %}
+
+                        {% if job.delivery_photo %}
+                            <a href="{% url 'update_status' job.id 'delivered' %}"
+                               class="btn btn-success btn-sm w-100 mb-2">
+                                ✔ Mark as Delivered
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm w-100 mb-2" disabled>
+                                Upload Proof First 📸
+                            </button>
+                        {% endif %}
+
+                    {% elif job.status == "delivered" %}
+                        <button class="btn btn-secondary btn-sm w-100" disabled>✓ Completed</button>
+
+                        <!-- Show delivery proof -->
+                        {% if job.delivery_photo %}
+                            <img src="{{ job.delivery_photo.url }}" class="img-fluid rounded mt-2">
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        {% empty %}
+            <p class="text-muted">No jobs assigned.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

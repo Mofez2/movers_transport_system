@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+{% block title %}Upload Delivery Photo{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h3>📸 Upload Delivery Proof</h3>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label class="form-label">Delivery Photo</label>
+        <input type="file" name="photo" accept="image/*" required class="form-control mb-3">
+
+        <button type="submit" class="btn btn-success w-100">
+            ✔ Submit Proof
+        </button>
+    </form>
+</div>
+{% endblock %}

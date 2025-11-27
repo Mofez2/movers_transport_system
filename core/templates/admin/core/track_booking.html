@@ -1,0 +1,101 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block title %}Live Route Tracker — Booking {{ booking.id }}{% endblock %}
+
+{% block content %}
+<h1>🚛 Booking #{{ booking.id }} — Live Route Tracker</h1>
+<div id="map" style="height: 600px; border-radius: 12px; overflow: hidden;"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<script>
+// === CONFIG ===
+const bookingId = "{{ booking.id }}";
+const pickup = "{{ booking.pickup_address|escapejs }}";
+const dropoff = "{{ booking.dropoff_address|escapejs }}";
+let routeLine = null;
+let marker = null;
+let routeCoords = [];
+let currentIndex = 0;
+
+// Create the map
+const map = L.map('map').setView([0, 0], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+// Vehicle icon
+const vehicleIcon = L.icon({
+  iconUrl: "{% static 'images/truck_icon.png' %}",  // local truck icon
+  iconSize: [50, 50],
+  iconAnchor: [25, 25],
+});
+
+
+// Function to get coordinates for addresses using Nominatim (OpenStreetMap geocoder)
+async function geocode(address) {
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+  const data = await res.json();
+  if (data.length > 0) return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+  return null;
+}
+
+// Function to get route between two coordinates
+async function getRoute(start, end) {
+  const url = `https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=full&geometries=geojson`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.routes && data.routes.length > 0) {
+    return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+  }
+  return [];
+}
+
+// Animate marker along the route
+function animateMarker() {
+  if (currentIndex < routeCoords.length) {
+    const latlng = routeCoords[currentIndex];
+    marker.setLatLng(latlng);
+    map.panTo(latlng, { animate: true, duration: 0.5 });
+    currentIndex++;
+    setTimeout(animateMarker, 300); // speed of movement
+  }
+}
+
+// Initialize the map
+async function initMap() {
+  const pickupCoord = await geocode(pickup);
+  const dropoffCoord = await geocode(dropoff);
+
+  if (!pickupCoord || !dropoffCoord) {
+    alert('Could not geocode one of the addresses.');
+    return;
+  }
+
+  // Fetch and display route
+  routeCoords = await getRoute(pickupCoord, dropoffCoord);
+  if (routeCoords.length === 0) {
+    alert('No route found between pickup and dropoff.');
+    return;
+  }
+
+  routeLine = L.polyline(routeCoords, { color: 'blue', weight: 5 }).addTo(map);
+  map.fitBounds(routeLine.getBounds());
+
+  // Place start & end markers
+  L.marker(pickupCoord).addTo(map).bindPopup("Pickup: " + pickup).openPopup();
+  L.marker(dropoffCoord).addTo(map).bindPopup("Dropoff: " + dropoff);
+
+  // Place moving vehicle marker
+  marker = L.marker(routeCoords[0], { icon: vehicleIcon }).addTo(map);
+
+  // Start movement
+  animateMarker();
+}
+
+initMap();
+</script>
+{% endblock %}

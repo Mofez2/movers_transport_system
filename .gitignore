@@ -1,0 +1,51 @@
+# ===============================
+# 🐍 Python
+# ===============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.pot
+*.mo
+*.sqlite3
+
+# ===============================
+# 🧱 Django
+# ===============================
+# Local DB
+db.sqlite3
+
+# Static files collected via collectstatic
+staticfiles/
+
+# Media uploads (optional – remove if you want to track sample uploads)
+media/
+
+# Environment variables and secrets
+.env
+*.env
+
+# ===============================
+# 🧰 Virtual Environment
+# ===============================
+venv/
+.venv/
+env/
+ENV/
+
+# ===============================
+# 💻 IDE / Editor Config
+# ===============================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ===============================
+# 🚀 Render / Deployment
+# ===============================
+# Render build output and cache
+render.yaml
+build/
+__render_staticfiles__/

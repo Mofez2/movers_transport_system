@@ -1,0 +1,72 @@
+{% extends 'admin/dashboard.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4 text-center fw-bold" 
+      style="background: linear-gradient(90deg, #6f42c1, #0d6efd); 
+             -webkit-background-clip: text; 
+             background-clip: text; 
+             color: transparent;">
+    💳 Payment Report
+  </h2>
+
+  <div class="card shadow-lg border-0 mb-4" style="backdrop-filter: blur(10px); background: rgba(255,255,255,0.1);">
+    <div class="card-body text-white">
+      <div class="row text-center">
+        <div class="col-md-4 mb-3">
+          <h5>Total Revenue</h5>
+          <p class="fs-4 fw-bold text-success">KES {{ total_revenue|floatformat:2 }}</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <h5>Total Deposits</h5>
+          <p class="fs-4 fw-bold text-warning">KES {{ total_deposits|floatformat:2 }}</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <h5>Total Balances</h5>
+          <p class="fs-4 fw-bold text-info">KES {{ total_balances|floatformat:2 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle rounded shadow-lg overflow-hidden">
+      <thead class="table-gradient" style="background: linear-gradient(90deg, #6f42c1, #0d6efd);">
+        <tr>
+          <th>#</th>
+          <th>Customer</th>
+          <th>Booking ID</th>
+          <th>Deposit (KES)</th>
+          <th>Balance (KES)</th>
+          <th>Total (KES)</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ p.booking.customer.username }}</td>
+          <td>#{{ p.booking.id }}</td>
+          <td>{{ p.booking.deposit_amount|floatformat:2 }}</td>
+          <td>{{ p.booking.balance_amount|floatformat:2 }}</td>
+          <td>{{ p.booking.total_price|floatformat:2 }}</td>
+          <td>
+            {% if p.successful %}
+              <span class="badge bg-success">Paid</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </td>
+          <td>{{ p.created_at|date:"M d, Y H:i A" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted">No payments found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

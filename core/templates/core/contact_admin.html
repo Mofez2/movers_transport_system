@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<style>
+  .contact-wrapper {
+    max-width: 650px;
+    margin: 60px auto;
+    background: var(--bs-body-bg, #fff);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 40px 50px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .contact-header { text-align: center; margin-bottom: 25px; }
+  .contact-header h2 { color: #1e3a8a; font-weight: 700; font-size: 1.8rem; }
+  .contact-header p { color: #6c757d; margin-top: 8px; }
+  .form-control {
+    border-radius: 10px; border: 1px solid #ced4da; padding: 12px; font-size: 0.95rem;
+  }
+  .form-control:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 .2rem rgba(37,99,235,0.2);
+  }
+  .btn-send {
+    width: 100%;
+    background: linear-gradient(90deg, #1e3a8a, #2563eb);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .btn-send:hover { transform: translateY(-2px); opacity: 0.9; }
+  .alert { border-radius: 10px; margin-top: 10px; }
+  .contact-info {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+  .contact-info strong { color: #1e3a8a; }
+  #toastArea { position: fixed; top: 20px; right: 20px; z-index: 2000; }
+
+  /* Toast Custom Theme */
+  .toast-header.blue-theme {
+    background: linear-gradient(90deg, #1e3a8a, #2563eb);
+    color: white !important;
+  }
+  .toast-header.blue-theme .btn-close {
+    filter: invert(1) brightness(2);
+  }
+
+  /* Optional dark mode */
+  @media (prefers-color-scheme: dark) {
+    .contact-wrapper {
+      background: #1e293b;
+      color: #f1f5f9;
+    }
+    .form-control {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+    .btn-send {
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+    }
+    .contact-header h2 { color: #60a5fa; }
+    .contact-info strong { color: #93c5fd; }
+  }
+</style>
+
+<div class="contact-wrapper">
+  <div class="contact-header">
+    <h2>Contact Admin</h2>
+    <p>Have questions or issues? Send us a message and we’ll get back to you.</p>
+  </div>
+
+  <form id="contactForm" method="post" action="{% url 'contact_admin' %}" data-action="{% url 'contact_admin' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="name" class="form-label">Your Name</label>
+      <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email Address</label>
+      <input type="email" id="email" name="email" class="form-control" placeholder="you@example.com" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="message" class="form-label">Message</label>
+      <textarea id="message" name="message" class="form-control" rows="4" placeholder="Write your message here..." required></textarea>
+    </div>
+
+    <button type="submit" class="btn-send">
+      <i class="bi bi-send me-1"></i> Send Message
+    </button>
+  </form>
+
+  <div class="contact-info mt-4">
+    <p><strong>📧 Email:</strong> barikmohamedabdi@gmail.com</p>
+    <p><strong>📞 Phone:</strong> +254 113 470 135</p>
+  </div>
+</div>
+
+<!-- ✅ Sending Modal -->
+<div class="modal fade" id="sendingModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Sending...</span>
+      </div>
+      <h5>Sending your message...</h5>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Toast Template -->
+<div id="toastArea" aria-live="polite" aria-atomic="true">
+  <div id="contactToastTemplate" class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="display:none;">
+    <div class="toast-header blue-theme">
+      <strong class="me-auto">Movers Transport</strong>
+      <small class="text-light">Just now</small>
+      <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      <div class="toast-message">Message sent successfully.</div>
+      <div class="mt-2">
+        <a href="{% url 'user_dashboard' %}" class="btn btn-sm btn-outline-primary">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Bootstrap Ready Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof bootstrap === 'undefined') {
+    console.error("⚠️ Bootstrap not loaded before script execution.");
+    return;
+  }
+
+  function getCookie(name) {
+    const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return match ? match.pop() : '';
+  }
+
+  function showToast(message, type = "success") {
+    const template = document.getElementById('contactToastTemplate');
+    const clone = template.cloneNode(true);
+    clone.style.display = 'block';
+    clone.id = '';
+    clone.querySelector('.toast-message').textContent = message;
+
+    if (type === "error") {
+      clone.querySelector('.toast-header').classList.remove('blue-theme');
+      clone.querySelector('.toast-header').classList.add('bg-danger', 'text-white');
+    }
+
+    document.getElementById('toastArea').appendChild(clone);
+    const toast = new bootstrap.Toast(clone, { autohide: true, delay: 4000 });
+    toast.show();
+  }
+
+  const form = document.getElementById('contactForm');
+  const sendingModal = new bootstrap.Modal(document.getElementById('sendingModal'));
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+
+    const payload = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      message: form.message.value.trim()
+    };
+
+    if (!payload.name || !payload.email || !payload.message) {
+      showToast("Please fill in all fields.", "error");
+      return;
+    }
+
+    sendingModal.show();
+
+    fetch(form.dataset.action, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(async response => {
+      const data = await response.json().catch(() => ({}));
+      sendingModal.hide();
+
+      if (response.ok && data.status === "success") {
+        form.reset();
+        showToast("Message sent successfully!");
+      } else {
+        showToast(data.message || "Failed to send message. Please try again.", "error");
+      }
+    })
+    .catch(() => {
+      sendingModal.hide();
+      showToast("Network error. Please try again.", "error");
+    });
+  });
+});
+</script>
+{% endblock %}

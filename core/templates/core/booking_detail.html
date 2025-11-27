@@ -1,0 +1,192 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Booking Details{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #111;
+    color: #fff;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .detail-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: linear-gradient(145deg, #1e1e2f, #252540);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #9b59b6;
+    margin-bottom: 10px;
+  }
+
+  .booking-status {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+
+  .status-pending { background: #f1c40f; color: #111; }
+  .status-delivered { background: #27ae60; color: #fff; }
+  .status-paid { background: #2980b9; color: #fff; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
+
+  .info-card {
+    background: #2a2a3d;
+    border-radius: 12px;
+    padding: 15px;
+  }
+
+  .info-card h3 {
+    font-size: 15px;
+    color: #ccc;
+    margin-bottom: 5px;
+  }
+
+  .info-card p {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .section-title {
+    margin-top: 40px;
+    font-size: 22px;
+    color: #9b59b6;
+    font-weight: 600;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  thead tr {
+    background: linear-gradient(90deg, #6f42c1, #9b59b6);
+    color: #fff;
+  }
+
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  tbody tr:nth-child(odd) { background: #2a2a3d; }
+  tbody tr:nth-child(even) { background: #24243a; }
+  tbody tr:hover { background: #3b3b5a; cursor: pointer; }
+
+  .back-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #6f42c1, #9b59b6);
+    border-radius: 8px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .back-btn:hover {
+    background: linear-gradient(135deg, #9b59b6, #6f42c1);
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="detail-container">
+  <h1>Booking #{{ booking.id }}</h1>
+  <span class="booking-status status-{{ booking.status|lower }}">{{ booking.status }}</span>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Pickup Location</h3>
+      <p>{{ booking.pickup_location }}</p>
+    </div>
+    <div class="info-card">
+      <h3>Destination</h3>
+      <p>{{ booking.destination }}</p>
+    </div>
+    <div class="info-card">
+      <h3>Vehicle Assigned</h3>
+      <p>{{ booking.vehicle.name|default:"Not assigned" }}</p>
+    </div>
+    <div class="info-card">
+      <h3>Price</h3>
+      <p>KES {{ booking.price|floatformat:2 }}</p>
+    </div>
+    <div class="info-card">
+      <h3>Created</h3>
+      <p>{{ booking.created_at|date:"M d, Y H:i" }}</p>
+    </div>
+  </div>
+
+  {% if payments %}
+  <h2 class="section-title">💳 Payment History</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Transaction ID</th>
+        <th>Amount (KES)</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pay in payments %}
+      <tr>
+        <td>{{ pay.transaction_id|default:"-" }}</td>
+        <td>{{ pay.amount|floatformat:2 }}</td>
+        <td>{{ pay.phone_number }}</td>
+        <td>{% if pay.successful %}✅ Success{% else %}⏳ Pending{% endif %}</td>
+        <td>{{ pay.created_at|date:"M d, Y H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if pings %}
+  <h2 class="section-title">📍 Tracking Updates</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ping in pings %}
+      <tr>
+        <td>{{ ping.latitude }}</td>
+        <td>{{ ping.longitude }}</td>
+        <td>{{ ping.timestamp|date:"M d, Y H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p style="margin-top:10px; color:#aaa;">No tracking data available for this booking.</p>
+  {% endif %}
+
+  <a href="{% url 'user_dashboard' %}" class="back-btn">← Back to Dashboard</a>
+</div>
+{% endblock %}

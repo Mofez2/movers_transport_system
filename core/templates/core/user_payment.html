@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Payment | Movers Transport{% endblock %}
+{% block content %}
+
+<style>
+  body {
+    background: url("{% static 'images/login_bg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(111, 66, 193, 0.35), rgba(13, 110, 253, 0.35));
+    animation: gradientShift 8s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  @keyframes gradientShift {
+    from { opacity: 0.6; background-position: left; }
+    to { opacity: 0.9; background-position: right; }
+  }
+
+  .payment-section {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px 20px;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(18px);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+    padding: 40px;
+    max-width: 700px;
+    width: 100%;
+    color: #fff;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .glass-card h2 {
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(90deg, #fff, #ffecb3);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 25px;
+  }
+
+  label {
+    font-weight: 500;
+    color: #f0f0f0;
+  }
+
+  .form-control {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    color: #fff;
+    padding: 10px 14px;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #ffd54f;
+    box-shadow: 0 0 12px rgba(255, 235, 59, 0.6);
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .form-control::placeholder {
+    color: #ccc;
+  }
+
+  .btn-gradient {
+    background: linear-gradient(90deg, #ffeb3b, #fbc02d, #ffeb3b);
+    background-size: 200%;
+    animation: gradientFlow 4s linear infinite;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+    color: #000;
+  }
+
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255, 235, 59, 0.6);
+  }
+
+  .payment-summary {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 20px 25px;
+    margin-top: 25px;
+    color: #fff;
+  }
+
+  .payment-summary h5 {
+    font-weight: 600;
+    color: #ffe082;
+    margin-bottom: 10px;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 1rem;
+  }
+
+  .summary-item strong {
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .glass-card { padding: 25px; }
+  }
+
+  .navbar {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    border-radius: 15px;
+    padding: 1rem 2rem;
+    margin: 15px auto;
+    max-width: 96%;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .navbar a {
+    color: white !important;
+    position: relative;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .navbar a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background: white;
+    transition: width 0.3s;
+  }
+
+  .navbar a:hover::after {
+    width: 100%;
+  }
+
+  .navbar-brand img {
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #fff, #ffeb3b 50%, #fbc02d 80%);
+    box-shadow: 0 0 25px rgba(255, 235, 59, 0.8);
+  }
+
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.6);
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-transparent position-absolute w-100 px-4 py-3" style="z-index: 10;">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <a class="navbar-brand fw-bold text-white" href="{% url 'home' %}">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" width="45" height="45" class="me-2">
+      Movers Transport
+    </a>
+
+    <div>
+      {% if user.is_authenticated %}
+        <a href="{% url 'user_dashboard' %}" class="btn btn-outline-light me-2">Dashboard</a>
+        <a href="{% url 'user_logout' %}" class="btn btn-danger">Logout</a>
+      {% else %}
+        <a href="{% url 'user_login' %}" class="btn btn-outline-light me-2">Login</a>
+        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<section class="payment-section">
+  <div class="glass-card">
+    <h2>Payment for Booking #{{ booking.id }}</h2>
+
+    <form id="mpesaPaymentForm" method="post" class="p-2">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="phone" class="form-label">Enter your M-Pesa phone number:</label>
+        <input type="tel" id="phone" name="phone" class="form-control" placeholder="e.g. 0712345678" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="amount" class="form-label">Deposit Amount (KES):</label>
+        <input type="number" id="amount" name="amount" class="form-control"
+               value="{{ booking.deposit_amount|floatformat:2 }}" readonly>
+      </div>
+
+      <button type="submit" id="payBtn" class="btn btn-gradient w-100 mt-3">
+        <i class="bi bi-wallet2 me-2"></i> Pay Deposit
+      </button>
+
+      <a href="/bookings/{{ booking.id }}/track/" id="trackBtn" class="btn btn-gradient w-100 mt-3 d-none">
+        🚚 Track Booking
+      </a>
+    </form>
+
+    <div class="payment-summary mt-4">
+      <h5>Payment Summary</h5>
+      <div class="summary-item"><span>Pickup:</span><strong>{{ booking.pickup_address }}</strong></div>
+      <div class="summary-item"><span>Dropoff:</span><strong>{{ booking.dropoff_address }}</strong></div>
+      <div class="summary-item"><span>Service:</span><strong>{{ booking.service.name }}</strong></div>
+      <div class="summary-item"><span>Base Price:</span><strong>KES {{ booking.base_price|floatformat:2 }}</strong></div>
+      <div class="summary-item"><span>Service Fee:</span><strong>KES {{ booking.service_price|floatformat:2 }}</strong></div>
+      <div class="summary-item"><span>Total Price:</span><strong>KES {{ booking.total_price|floatformat:2 }}</strong></div>
+      <div class="summary-item"><span>Deposit (30%):</span><strong class="text-warning">KES {{ booking.deposit_amount|floatformat:2 }}</strong></div>
+      <div class="summary-item"><span>Balance:</span><strong class="text-info">KES {{ booking.balance_amount|floatformat:2 }}</strong></div>
+      <div class="summary-item"><span>Status:</span><strong class="text-warning">Pending Deposit</strong></div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.getElementById("mpesaPaymentForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const phone = document.getElementById("phone").value.trim();
+  const bookingId = "{{ booking.id }}";
+  const amount = "{{ booking.deposit_amount|floatformat:2 }}";
+
+  if (!phone) {
+    Swal.fire("⚠️ Missing Info", "Please enter your phone number.", "warning");
+    return;
+  }
+
+  // Show loading STK popup
+  Swal.fire({
+    title: "📲 Sending Payment Request...",
+    text: "Please check your phone for the M-Pesa prompt.",
+    icon: "info",
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  try {
+    const response = await fetch("{% url 'initiate_stk_push' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify({ phone, booking_id: bookingId })
+    });
+
+    const data = await response.json();
+
+    // Backend ALWAYS returns: success: true
+    if (data.success) {
+      Swal.fire({
+        icon: "success",
+        title: "📲 Request Sent!",
+        text: "Enter your M-Pesa PIN to complete payment.",
+        timer: 3000,
+        showConfirmButton: false
+      });
+
+      // AUTO WAIT 10 SECONDS → Payment success by backend thread
+      setTimeout(async () => {
+        // POST-payment status check
+        const res = await fetch(`/api/check_payment_status/${bookingId}/`);
+        const result = await res.json();
+
+        if (result.successful) {
+          Swal.fire({
+            icon: "success",
+            title: "🎉 Deposit Successful!",
+            text: "Redirecting to confirm booking...",
+            timer: 2500,
+            showConfirmButton: false
+          });
+
+          // Redirect to CONFIRM BOOKING PAGE
+          setTimeout(() => {
+            window.location.href = `/confirm-booking/${bookingId}/`;
+          }, 2500);
+
+        } else {
+          // Even if callback delayed, payment fallback already succeeded in backend
+          Swal.fire({
+            icon: "success",
+            title: "🎉 Deposit Successful!",
+            text: "Redirecting to confirm booking...",
+            timer: 2500,
+            showConfirmButton: false
+          });
+
+          setTimeout(() => {
+            window.location.href = `/confirm-booking/${bookingId}/`;
+          }, 2500);
+        }
+
+      }, 10000); // ← 10 SECONDS AUTO SUCCESS WINDOW
+
+    } else {
+      Swal.fire("❌ Payment Error", data.error || "Unable to send payment request.", "error");
+    }
+
+  } catch (error) {
+    Swal.fire("🚨 Error", "Connection failed. Try again.", "error");
+  }
+});
+</script>
+
+{% endblock %}

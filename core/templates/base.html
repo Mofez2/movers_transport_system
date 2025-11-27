@@ -1,0 +1,293 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Movers Transport System{% endblock %}</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(90deg, #6f42c1, #0d6efd);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --blur: blur(20px);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      background: url("{% static 'images/login_bg.jpg' %}") center/cover fixed no-repeat;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: -1;
+      backdrop-filter: blur(6px);
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      backdrop-filter: var(--blur);
+      background: var(--glass-bg);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .navbar:hover {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 12px 40px rgba(13, 110, 253, 0.25);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #fff !important;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar-brand img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 12px rgba(13, 110, 253, 0.6);
+      animation: pulseLogo 2.5s infinite ease-in-out;
+    }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(13, 110, 253, 0.6); }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(13, 110, 253, 0.9); }
+    }
+
+    .nav-link, .navbar a.btn {
+      color: #fff !important;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .navbar a.btn-outline-primary {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+
+    .navbar a.btn-outline-primary:hover {
+      background: var(--primary-gradient);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(13, 110, 253, 0.4);
+    }
+
+    .navbar a.btn-primary {
+      background: var(--primary-gradient);
+      border: none;
+      color: #fff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .navbar a.btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(111, 66, 193, 0.5);
+    }
+
+    .btn-danger {
+      background: linear-gradient(90deg, #ff4757, #e63946);
+      border: none;
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main.container {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(25px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      margin-top: 40px;
+      color: #fff;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ddd;
+      font-size: 0.9rem;
+      padding: 20px 0;
+      margin-top: 60px;
+      box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    footer a {
+      color: #0d6efd;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #9b78ff;
+    }
+
+    /* ===== GLOBAL TOAST ===== */
+    #global-toast-area {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2100;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 🌐 Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark py-3 fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" /> Movers Transport
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a href="{% url 'user_dashboard' %}" class="btn btn-outline-primary me-2">Dashboard</a>
+            </li>
+            {% if user.is_staff %}
+            <li class="nav-item">
+              <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-light me-2">Admin Panel</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a href="{% url 'user_logout' %}" class="btn btn-danger">Logout</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a href="{% url 'user_login' %}" class="btn btn-outline-primary me-2">Login</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 📄 Page Content -->
+  <main class="container mt-5 pt-5">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- 🦶 Footer -->
+  <footer class="text-center mt-5">
+    <div class="container">
+      <p class="mb-1">© {% now "Y" %} Movers Transport System — All Rights Reserved</p>
+      <p>
+        <a href="{% url 'contact_admin' %}">Contact</a> |
+        <a href="#">Privacy</a> |
+        <a href="#">Terms</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ✅ Toast -->
+  <div id="global-toast-area" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ✅ Booking Confirmation Modal -->
+  <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg text-dark">
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title" id="bookingModalLabel">Booking Confirmed ✅</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+          <i class="bi bi-check-circle-fill text-success display-3 mb-3"></i>
+          <p class="fs-5" id="bookingModalBody">
+            Your booking is confirmed! Please check your email for confirmation and payment instructions.
+          </p>
+        </div>
+        <div class="modal-footer justify-content-center border-0 pb-4">
+          <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary px-4">Go to Dashboard</a>
+          <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/script.js' %}"></script>
+
+  <!-- ✅ Django Messages Logic (no AJAX) -->
+  {% if messages %}
+    {% for message in messages %}
+      <div id="django-message" data-message="{{ message }}" data-tags="{{ message.tags }}" style="display:none"></div>
+    {% endfor %}
+  {% endif %}
+
+  <script>
+    // Toast Helper
+    window.showToast = function(message, type = 'success') {
+      const area = document.getElementById('global-toast-area');
+      const toast = document.createElement('div');
+      toast.className = `toast align-items-center text-bg-${type} border-0 show mb-2`;
+      toast.role = 'alert';
+      toast.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body">${message}</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>`;
+      area.appendChild(toast);
+      new bootstrap.Toast(toast, { delay: 4000 }).show();
+    };
+
+    // ✅ Handle Django messages (modal or toast)
+    document.addEventListener('DOMContentLoaded', function() {
+      const msgEl = document.getElementById('django-message');
+      if (msgEl) {
+        const messageText = msgEl.dataset.message || '';
+        const tags = msgEl.dataset.tags || '';
+        if (/booking/i.test(messageText)) {
+          document.getElementById('bookingModalBody').textContent = messageText;
+          new bootstrap.Modal(document.getElementById('bookingModal')).show();
+        } else {
+          const type = tags.includes('error') ? 'danger' : 'success';
+          showToast(messageText, type);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - Movers Transport</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: url("{% static 'images/login_bg.jpg' %}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.55);
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 0 0;
+    }
+
+    header img {
+      height: 70px;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
+    }
+
+    header h1 {
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+    }
+
+    header p {
+      color: #f8f9fa;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .signup-container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 40px 35px;
+      width: 420px;
+      margin: 80px auto;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .signup-container h2 {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+    }
+
+    .signup-container p {
+      text-align: center;
+      color: #f8f9fa;
+      font-size: 0.9rem;
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #f8f9fa;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      border-radius: 10px;
+      border: none;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .form-control:focus {
+      background: #fff;
+      box-shadow: 0 0 8px rgba(111, 66, 193, 0.4);
+      border: 1px solid #6f42c1;
+    }
+
+    .btn-primary {
+      background-color: #6f42c1;
+      border: none;
+      width: 100%;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      border-radius: 10px;
+      padding: 12px;
+      transition: 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #5a34a1;
+      box-shadow: 0 0 10px rgba(111, 66, 193, 0.5);
+    }
+
+    .bottom-text {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+
+    .bottom-text a {
+      color: #ffc107;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .bottom-text a:hover {
+      text-decoration: underline;
+      color: #ffda6a;
+    }
+
+    /* ===== Modal Styles ===== */
+    .modal-content {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .modal-footer {
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .modal-body input, .modal-body textarea {
+      background: rgba(255,255,255,0.9);
+      border: none;
+      color: #000;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="overlay"></div>
+
+  <header>
+    <img src="{% static 'images/logo.png' %}" alt="Movers Transport Logo">
+    <h1>WELCOME TO MOVERS TRANSPORT</h1>
+    <p>MOVING MADE EASY</p>
+  </header>
+
+  <div class="signup-container">
+    <h2>Create Account</h2>
+    <p>Join us and make your next move stress-free 🚚</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email address</label>
+        <input type="email" name="email" id="email" class="form-control" placeholder="example@email.com" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="mobile" class="form-label">Mobile number</label>
+        <input type="tel" name="mobile" id="mobile" class="form-control" placeholder="+2547XXXXXXXX" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="password1" class="form-label">Password</label>
+        <input type="password" name="password1" id="password1" class="form-control" placeholder="Enter password" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="password2" class="form-label">Confirm password</label>
+        <input type="password" name="password2" id="password2" class="form-control" placeholder="Confirm password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create account</button>
+    </form>
+
+    <div class="bottom-text">
+      <p>Already registered? <a href="{% url 'user_login' %}">Log in</a></p>
+      <p>Need an account created by admin? <a data-bs-toggle="modal" data-bs-target="#contactAdminModal">Contact admin</a></p>
+    </div>
+  </div>
+
+  <!-- Contact Admin Modal -->
+  <div class="modal fade" id="contactAdminModal" tabindex="-1" aria-labelledby="contactAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="contactAdminModalLabel">📩 Contact Admin</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="contactAdminForm">
+            <div class="mb-3">
+              <label for="contactName" class="form-label">Your Name</label>
+              <input type="text" id="contactName" class="form-control" placeholder="Enter your name" required>
+            </div>
+            <div class="mb-3">
+              <label for="contactEmail" class="form-label">Your Email</label>
+              <input type="email" id="contactEmail" class="form-control" placeholder="example@email.com" required>
+            </div>
+            <div class="mb-3">
+              <label for="contactMessage" class="form-label">Message</label>
+              <textarea id="contactMessage" class="form-control" rows="4" placeholder="Write your message here..." required></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="sendMessageBtn">Send Message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+  document.getElementById('sendMessageBtn').addEventListener('click', async function () {
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
+
+    if (!name || !email || !message) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Fields ⚠️',
+        text: 'Please fill in all fields before sending.',
+        confirmButtonColor: '#6f42c1'
+      });
+      return;
+    }
+
+    try {
+      const res = await fetch("/contact-admin/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          name: name,
+          email: email,
+          message: message,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.status === "success") {
+        Swal.fire({
+          icon: 'success',
+          title: 'Message Sent 🎉',
+          text: 'Your message has been delivered to the admin successfully!',
+          confirmButtonColor: '#6f42c1'
+        });
+        document.getElementById('contactAdminForm').reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('contactAdminModal'));
+        modal.hide();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error ❌',
+          text: data.message || 'Failed to send message. Please try again later.',
+          confirmButtonColor: '#6f42c1'
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Server Error 💥',
+        text: 'Could not reach the server. Please try again later.',
+        confirmButtonColor: '#6f42c1'
+      });
+    }
+  });
+  </script>
+</body>
+</html>

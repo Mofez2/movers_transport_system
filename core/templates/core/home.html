@@ -1,0 +1,175 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Home | Movers Transport{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section id="hero" class="hero d-flex align-items-center justify-content-center text-center text-white"
+         data-bg="{% static 'images/hero-bg.jpg' %}"
+         style="height: 95vh;">
+  <div class="container">
+    <h1 class="display-4 fw-bold mb-3 animate__animated animate__fadeInDown">Your Trusted Moving & Logistics Partner</h1>
+    <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+      Seamless, affordable and secure transportation anywhere in Kenya.
+    </p>
+    <a href="{% url 'user_booking' %}" class="btn btn-lg btn-primary px-5 shadow-lg animate__animated animate__fadeInUp animate__delay-2s">
+      🚚 Book a Move
+    </a>
+  </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="container py-5 text-center">
+  <h2 class="fw-semibold mb-5 text-light">Why Choose Us</h2>
+  <div class="row g-4 justify-content-center">
+    <div class="col-md-4">
+      <div class="feature-card p-4 h-100">
+        <h5>⏱ Fast Delivery</h5>
+        <p>Our professional movers ensure your goods arrive quickly and safely.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feature-card p-4 h-100">
+        <h5>🔒 Secure & Reliable</h5>
+        <p>We use real-time tracking and careful handling to protect your items.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feature-card p-4 h-100">
+        <h5>💰 Affordable Pricing</h5>
+        <p>Transparent pricing tailored to your move — no hidden charges.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY SECTION -->
+<section class="container py-5 text-center">
+  <h2 class="fw-semibold mb-4 text-light">Gallery</h2>
+  <div class="d-flex justify-content-center flex-wrap gap-4">
+    <div class="img-glass">
+      <img src="{% static 'images/truck1.jpg' %}" class="rounded shadow-sm" width="260" alt="Truck 1">
+    </div>
+    <div class="img-glass">
+      <img src="{% static 'images/truck2.jpg' %}" class="rounded shadow-sm" width="260" alt="Truck 2">
+    </div>
+    <div class="img-glass">
+      <img src="{% static 'images/truck3.jpg' %}" class="rounded shadow-sm" width="260" alt="Truck 3">
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section class="about-section py-5 text-center">
+  <div class="container">
+    <h2 class="fw-semibold mb-4 text-light">About Movers Transport</h2>
+    <p class="lead mx-auto text-light" style="max-width: 700px;">
+      At Movers Transport, we specialize in efficient moving and logistics solutions across Kenya. 
+      Whether it’s household, office, or refrigerated transport — we deliver reliability, speed, and peace of mind.
+    </p>
+    <a href="{% url 'contact_admin' %}" class="btn btn-outline-light mt-3 px-4">
+      📞 Contact Us
+    </a>
+  </div>
+</section>
+
+<!-- STYLES -->
+<style>
+  body {
+    background: url("{% static 'images/login_bg.jpg' %}") center/cover fixed no-repeat;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: -1;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    backdrop-filter: blur(5px);
+    animation: fadeInHero 1.5s ease-out;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+  }
+
+  .hero .container {
+    z-index: 2;
+    position: relative;
+  }
+
+  /* FEATURE CARDS */
+  .feature-card {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 35px rgba(13,110,253,0.4);
+  }
+
+  /* GALLERY */
+  .img-glass {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 5px;
+  }
+
+  .img-glass:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 25px rgba(13,110,253,0.3);
+  }
+
+  .about-section {
+    background: rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+  }
+
+  /* Animations */
+  @keyframes fadeInHero {
+    from { opacity: 0; transform: scale(1.05); }
+    to { opacity: 1; transform: scale(1); }
+  }
+</style>
+
+<!-- SCRIPT -->
+<script>
+  (function () {
+    const hero = document.getElementById('hero');
+    if (!hero) return;
+    const bg = hero.dataset.bg || '';
+    if (bg) {
+      hero.style.backgroundImage = `url('${bg}')`;
+      hero.style.backgroundRepeat = 'no-repeat';
+      hero.style.backgroundPosition = 'center';
+      hero.style.backgroundSize = 'cover';
+    }
+  })();
+</script>
+{% endblock %}
