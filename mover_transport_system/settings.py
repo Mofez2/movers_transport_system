@@ -98,16 +98,11 @@ ASGI_APPLICATION = 'mover_transport_system.asgi.application'
 # 🗄️ DATABASE CONFIGURATION
 # ===========================================
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'movers_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Barik123',   # ← replace if you used a different password
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    "default": dj_database_url.config(
+        default="sqlite:///" + str(BASE_DIR / "db.sqlite3"),
+        conn_max_age=600,
+    )
 }
-
 # ===========================================
 # 🔑 PASSWORD VALIDATORS (optional dev mode)
 # ===========================================
